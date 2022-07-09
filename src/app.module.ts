@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [ConfigModule.forRoot({ cache: true })],
+  imports: [ConfigModule.forRoot({ cache: true }), DatabaseModule],
   controllers: [AppController],
   providers: [AppService],
 })
