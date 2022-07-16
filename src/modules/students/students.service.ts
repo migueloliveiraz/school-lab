@@ -1,18 +1,27 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StudentsRepository } from './repositories/students.repository';
 
-import { StudentsRepositoryContract } from './contracts/students-repository.contract';
 import { CreateStudentDto } from './dtos/create-student.dto';
 import { UpdateStudentDto } from './dtos/update-student.dto';
+import { HashProvider } from './providers/hash.provider';
 
 @Injectable()
 export class StudentsService {
   constructor(
-    @Inject(StudentsRepository)
-    private studentsRepository: StudentsRepositoryContract,
+    private studentsRepository: StudentsRepository,
+    private hashProvider: HashProvider,
   ) {}
 
-  createStudent(data: CreateStudentDto) {
+  async createStudent(createStudentDto: CreateStudentDto) {
+    const { password } = createStudentDto;
+
+    const hashedPassword = await this.hashProvider.generateHash(password);
+
+    const data = {
+      ...createStudentDto,
+      password: hashedPassword,
+    };
+
     return this.studentsRepository.createStudent(data);
   }
 
